@@ -56,66 +56,65 @@ public class SimplePaint extends JFrame {
     }
 
     // Inner class for drawing area
-    class DrawArea extends JPanel {
-        private Image image;
-        private Graphics2D g2;
-        private int prevX, prevY;
+    // In the DrawArea inner class, remove the currentColor field entirely
+class DrawArea extends JPanel {
+    private Image image;
+    private Graphics2D g2;
+    private int prevX, prevY;
+    private static final int STROKE_WIDTH = 2;
 
-        public DrawArea() {
-            setDoubleBuffered(false);
-            setBackground(Color.WHITE);
+    public DrawArea() {
+        setDoubleBuffered(true);  // Re-enable proper double buffering
+        setBackground(Color.WHITE);
 
-            addMouseListener(new MouseAdapter() {
-                @Override
-                public void mousePressed(MouseEvent e) {
-                    prevX = e.getX();
-                    prevY = e.getY();
-                }
-            });
-
-            addMouseMotionListener(new MouseMotionAdapter() {
-                @Override
-                public void mouseDragged(MouseEvent e) {
-                    int currX = e.getX();
-                    int currY = e.getY();
-                    if (g2 != null) {
-                        g2.setColor(currentColor);
-                        g2.setStroke(new BasicStroke(2));
-                        g2.drawLine(prevX, prevY, currX, currY);
-                        repaint();
-                        prevX = currX;
-                        prevY = currY;
-                    }
-                }
-            });
-        }
-
-        @Override
-        protected void paintComponent(Graphics g) {
-            super.paintComponent(g);
-            if (image == null) {
-                // Create the drawing buffer
-                image = createImage(getWidth(), getHeight());
-                g2 = (Graphics2D) image.getGraphics();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                clear();
+        addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                prevX = e.getX();
+                prevY = e.getY();
             }
-            g.drawImage(image, 0, 0, null);
-        }
+        });
 
-        public void clear() {
-            if (g2 != null) {
-                g2.setPaint(Color.WHITE);
-                g2.fillRect(0, 0, getWidth(), getHeight());
-                g2.setPaint(currentColor);
-                repaint();
+        addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                int currX = e.getX();
+                int currY = e.getY();
+                if (g2 != null) {
+                    g2.setColor(SimplePaint.this.currentColor);  // Access outer class's color
+                    g2.setStroke(new BasicStroke(STROKE_WIDTH));
+                    g2.drawLine(prevX, prevY, currX, currY);
+                    repaint();
+                    prevX = currX;
+                    prevY = currY;
+                }
             }
-        }
+        });
+    }
 
-        public void setCurrentColor(Color color) {
-            this.currentColor = color;
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        if (image == null) {
+            image = createImage(getWidth(), getHeight());
+            g2 = (Graphics2D) image.getGraphics();
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            clear();
+        }
+        g.drawImage(image, 0, 0, null);
+    }
+
+    public void clear() {
+        if (g2 != null) {
+            g2.setPaint(Color.WHITE);
+            g2.fillRect(0, 0, getWidth(), getHeight());
+            g2.setPaint(SimplePaint.this.currentColor);
+            repaint();
         }
     }
+
+    // Remove the setCurrentColor method entirely - it's not needed!
+}
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
