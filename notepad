@@ -1,3 +1,7 @@
+C++ [dictionary]       [term] + [meaning]     this is defining the same in interpretation - it's defining
+
+[term] or [gesture] is just a proxy between reality and meaning
+
 double *f()
 declare f as [function] returning [pointer to double]
 
