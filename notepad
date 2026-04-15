@@ -1,3 +1,5 @@
-123
-xxx
-789
+double *f()
+declare f as [function] returning [pointer to double]
+
+double (*f)()
+declare f as [pointer to function] returning [double]
